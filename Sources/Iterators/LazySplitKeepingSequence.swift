@@ -1,9 +1,9 @@
-struct LazySplitOmittingSequence<Base: Sequence> {
+struct LazySplitKeepingSequence<Base: Sequence> {
     let base: Base
     let isSeparator: (Base.Element) -> Bool
 }
 
-extension LazySplitOmittingSequence {
+extension LazySplitKeepingSequence {
     struct Iterator {
         var base: Base.Iterator
         var current: Base.Element? = nil
@@ -11,12 +11,13 @@ extension LazySplitOmittingSequence {
     }
 }
 
-extension LazySplitOmittingSequence.Iterator: IteratorProtocol {
+extension LazySplitKeepingSequence.Iterator: IteratorProtocol {
     mutating func next() -> [Base.Element]? {
         var result: [Base.Element]? = nil
+        let previous = self.current
         self.current = base.next()
-        while let current = self.current, isSeparator(current) {
-            self.current = base.next()
+        if previous == nil && self.current == nil {
+            return nil
         }
         while let current = self.current, !isSeparator(current) {
             if result == nil {
@@ -25,11 +26,11 @@ extension LazySplitOmittingSequence.Iterator: IteratorProtocol {
             result?.append(current)
             self.current = base.next()
         }
-        return result
+        return result ?? []
     }
 }
 
-extension LazySplitOmittingSequence: Sequence {
+extension LazySplitKeepingSequence: Sequence {
     func makeIterator() -> Iterator {
         Iterator(
             base: base.makeIterator(),
@@ -38,15 +39,15 @@ extension LazySplitOmittingSequence: Sequence {
     }
 }
 
-extension LazySplitOmittingSequence: LazySequenceProtocol {
-    typealias Elements = LazySplitOmittingSequence
+extension LazySplitKeepingSequence: LazySequenceProtocol {
+    typealias Elements = LazySplitKeepingSequence
 }
 
 extension LazySequenceProtocol {
-    func splitOmittingEmptySequences(
-        _ isSeparator: @escaping (Elements.Element) -> Bool
-    ) -> LazySplitOmittingSequence<Elements> {
-        LazySplitOmittingSequence(
+    func splitKeeping(
+        isSeparator: @escaping (Elements.Element) -> Bool
+    ) -> LazySplitKeepingSequence<Elements> {
+        LazySplitKeepingSequence(
             base: elements,
             isSeparator: isSeparator
         )
@@ -54,10 +55,10 @@ extension LazySequenceProtocol {
 }
 
 extension LazySequenceProtocol where Elements.Element: Equatable {
-    func splitOmittingEmptySequences(
+    func splitKeeping(
         separator: Elements.Element
-    ) -> LazySplitOmittingSequence<Elements> {
-        LazySplitOmittingSequence(
+    ) -> LazySplitKeepingSequence<Elements> {
+        LazySplitKeepingSequence(
             base: elements,
             isSeparator: { $0 == separator }
         )

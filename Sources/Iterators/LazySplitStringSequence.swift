@@ -10,16 +10,6 @@ extension LazySplitStringSequence {
         var current: String.Element? = nil
         let omittingEmptySubsequences: Bool
         let isSeparator: (String.Element) -> Bool
-
-        init(
-            base: String.Iterator,
-            omittingEmptySubsequences: Bool,
-            isSeparator: @escaping (String.Element) -> Bool
-        ) {
-            self.base = base
-            self.omittingEmptySubsequences = omittingEmptySubsequences
-            self.isSeparator = isSeparator
-        }
     }
 }
 
