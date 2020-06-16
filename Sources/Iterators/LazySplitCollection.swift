@@ -35,7 +35,7 @@ extension LazySplitCollection: Collection {
 
     /// Not _O(1)_
     subscript(position: Index) -> Base.SubSequence {
-        guard let index = position.index else { return base[base.endIndex ..< base.endIndex]}
+        guard let index = position.index else { return base[base.endIndex ..< base.endIndex] }
 
         if !omittingEmptySubsequences && index == base.endIndex {
             return base[base.endIndex ..< base.endIndex]
@@ -70,9 +70,7 @@ extension LazySplitCollection: Collection {
         else {
             guard let separator = base[index...].firstIndex(where: isSeparator)
                 else { return .index(base.endIndex) }
-
-            let x = base.index(after: separator)
-            return .index(x)
+            return .index(base.index(after: separator))
         }
     }
 }
