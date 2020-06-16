@@ -83,3 +83,29 @@ extension LazySplitCollection: BidirectionalCollection where Base: Bidirectional
         return .index(separator?.base ?? base.startIndex)
     }
 }
+
+extension LazyCollectionProtocol {
+    func split(
+        omittingEmptySubsequences: Bool = true,
+        isSeparator: @escaping (Elements.Element) -> Bool
+    ) -> LazySplitCollection<Elements> {
+        LazySplitCollection(
+            base: elements,
+            omittingEmptySubsequences: omittingEmptySubsequences,
+            isSeparator: isSeparator
+        )
+    }
+}
+
+extension LazyCollectionProtocol where Elements.Element: Equatable {
+    func split(
+        separator: Elements.Element,
+        omittingEmptySubsequences: Bool = true
+    ) -> LazySplitCollection<Elements> {
+        LazySplitCollection(
+            base: elements,
+            omittingEmptySubsequences: omittingEmptySubsequences,
+            isSeparator:  { $0 == separator }
+        )
+    }
+}

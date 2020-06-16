@@ -67,17 +67,34 @@ extension LazySplitStringCollection: Collection {
         }
         else {
             guard let separator = base[index...].firstIndex(where: isSeparator)
-                else { return .ended } //.index(base.endIndex) }
+                else { return .ended }
 
-            let x = base.index(after: separator)
-            return .index(x)
+            return .index(base.index(after: separator))
         }
     }
 }
 
 extension LazyCollectionProtocol where Elements == String {
-    func split(separator: Element) -> LazySplitStringCollection {
-        return LazySplitStringCollection(base: elements, omittingEmptySubsequences: false) { $0 == separator }
+    func split(
+        separator: Element,
+        omittingEmptySequences: Bool = false
+    ) -> LazySplitStringCollection {
+        LazySplitStringCollection(
+            base: elements,
+            omittingEmptySubsequences: false,
+            isSeparator: { $0 == separator }
+        )
+    }
+
+    func split(
+        omittingEmptySubsequences: Bool = false,
+        isSeparator: @escaping (String.Element) -> Bool
+    ) -> LazySplitStringCollection {
+        LazySplitStringCollection(
+            base: elements,
+            omittingEmptySubsequences: omittingEmptySubsequences,
+            isSeparator: isSeparator
+        )
     }
 }
 

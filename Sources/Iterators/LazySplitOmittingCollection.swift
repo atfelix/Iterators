@@ -58,3 +58,26 @@ extension LazySplitOmittingCollection: BidirectionalCollection where Base: Bidir
         return .index(separator?.base ?? base.startIndex)
     }
 }
+
+extension LazyCollectionProtocol {
+    func splitOmitting(
+        isSeparator: @escaping (Elements.Element) -> Bool
+    ) -> LazySplitOmittingCollection<Elements> {
+        LazySplitOmittingCollection(
+            base: elements,
+            isSeparator: isSeparator
+        )
+    }
+}
+
+extension LazyCollectionProtocol where Elements.Element: Equatable {
+    func splitOmitting(
+        separator: Elements.Element
+    ) -> LazySplitOmittingCollection<Elements> {
+        LazySplitOmittingCollection(
+            base: elements,
+            isSeparator:  { $0 == separator }
+        )
+    }
+}
+

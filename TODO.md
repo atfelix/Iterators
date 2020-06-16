@@ -1,7 +1,5 @@
 # Todo iterators and sequences
 
-- Add lazy omitting split sequences instead of using conditional logic for strings and collections
-- Add lazy omitting split collections instead of using conditional logic for strings and collections
 - Add chunking exact collection instead of using conditional logic
 - Add chunking exact sequence instead of using conditional logic
 - Add windowing exact collection instead of using conditional logic
