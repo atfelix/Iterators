@@ -1,6 +1,5 @@
 # Todo iterators and sequences
 
-- Add chunking exact collection instead of using conditional logic
 - Add chunking exact sequence instead of using conditional logic
 - Add windowing exact collection instead of using conditional logic
 - Add windowing exact sequence instead of using conditional logic
