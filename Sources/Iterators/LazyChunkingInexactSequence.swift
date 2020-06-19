@@ -11,7 +11,7 @@ extension LazyChunkingInexactSequence {
 }
 
 extension LazyChunkingInexactSequence.Iterator: IteratorProtocol {
-    mutating func next() -> Element? {
+    mutating func next() -> [Base.Element]? {
         guard let element = base.next() else { return nil }
 
         var elements = [element]

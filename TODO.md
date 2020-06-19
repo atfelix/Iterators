@@ -8,5 +8,5 @@
   - [`peekable`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.peekable)
   - [`scan`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.scan)
   - [`step_by`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.step_by)
-  - [`unzip`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.unzip)
 - Consider adding some of the string iterators that Rust has as well
+- See how which of the new sequence and collection types works well with lazy protocol and which need new types

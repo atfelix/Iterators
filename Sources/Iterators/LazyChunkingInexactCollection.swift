@@ -9,7 +9,7 @@ extension LazyChunkingInexactCollection: Collection {
     var startIndex: Index { base.startIndex }
     var endIndex: Index { base.endIndex}
 
-    subscript(position: Base.Index) -> Slice<LazyChunkingInexactCollection<Base>> {
+    subscript(position: Base.Index) -> Base.SubSequence {
         let nextIndex = base.index(position, offsetBy: size, limitedBy: endIndex) ?? endIndex
         return base[position ..< nextIndex]
     }
@@ -19,10 +19,10 @@ extension LazyChunkingInexactCollection: Collection {
     }
 }
 
-extension LazyChunkingExactCollection: BidirectionalCollection where Base: BidirectionalCollection {
+extension LazyChunkingInexactCollection: BidirectionalCollection where Base: BidirectionalCollection {
     func index(before i: Index) -> Index {
         let offset = i == endIndex ? base.count % size + 1 : size
-        return base.index(i, offset: -offset, limitedBy: startIndex) ?? startIndex
+        return base.index(i, offsetBy: -offset, limitedBy: startIndex) ?? startIndex
     }
 }
 
