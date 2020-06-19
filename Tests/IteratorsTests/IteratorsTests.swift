@@ -63,4 +63,8 @@ final class IteratorsTests: XCTestCase {
     func test7() {
         XCTAssertEqual(Array([0, 1, 2, 3, 4, 5].stepBy(size: 2)), [0, 2, 4])
     }
+
+    func test8() {
+        XCTAssertEqual(Array(repeatForever(element: 1).prefix(5)), [1,1,1,1,1])
+    }
 }
