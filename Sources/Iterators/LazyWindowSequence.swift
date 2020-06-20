@@ -41,6 +41,8 @@ extension LazyWindowSequence: Sequence {
     }
 }
 
+extension LazyWindowSequence: LazySequenceProtocol {}
+
 extension LazySequenceProtocol {
     func windows(
         of size: Int

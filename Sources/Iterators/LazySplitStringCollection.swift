@@ -30,7 +30,18 @@ struct LazySplitStringCollection {
 }
 
 extension LazySplitStringCollection: Collection {
-    var startIndex: Index { .index(base.startIndex) }
+    var startIndex: Index {
+        if omittingEmptySubsequences {
+            var index = base.startIndex
+            while index < base.endIndex, isSeparator(base[index]) {
+                base.formIndex(after: &index)
+            }
+            return .index(index)
+        }
+        else {
+            return .index(base.startIndex)
+        }
+    }
     var endIndex: Index { .ended }
 
     /// Not _O(1)_
@@ -73,6 +84,8 @@ extension LazySplitStringCollection: Collection {
         }
     }
 }
+
+extension LazySplitStringCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol where Elements == String {
     func split(

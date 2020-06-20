@@ -37,6 +37,8 @@ extension StepBySequence: Sequence {
     }
 }
 
+extension StepBySequence: LazySequenceProtocol {}
+
 extension Sequence {
     func stepBy(size: UInt) -> StepBySequence<Self> {
         precondition(size > 0)

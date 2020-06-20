@@ -20,6 +20,8 @@ extension RepeatedForever: Sequence {
     }
 }
 
+extension RepeatedForever: LazySequenceProtocol {}
+
 func repeatForever<Element>(element: Element) -> RepeatedForever<Element> {
     .init(element: element)
 }

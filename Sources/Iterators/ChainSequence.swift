@@ -22,9 +22,11 @@ extension ChainSequence: Sequence {
     }
 }
 
+extension ChainSequence: LazySequenceProtocol {}
+
 extension Sequence {
     func chain<Other: Sequence>(
-        other: Other
+        _ other: Other
     ) -> ChainSequence<Self, Other> where Self.Element == Other.Element {
         ChainSequence(base1: self, base2: other)
     }

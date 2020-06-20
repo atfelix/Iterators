@@ -31,6 +31,8 @@ extension CycleSequence: Sequence {
     }
 }
 
+extension CycleSequence: LazySequenceProtocol {}
+
 extension Sequence {
     func cycled() -> CycleSequence<Self> {
         CycleSequence(base: self)

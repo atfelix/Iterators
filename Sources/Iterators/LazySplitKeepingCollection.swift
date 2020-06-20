@@ -34,7 +34,7 @@ extension LazySplitKeepingCollection: Collection {
 
     subscript(position: Index) -> Base.SubSequence {
         guard let index = position.index,
-            index == base.endIndex
+            index != base.endIndex
             else { return base[base.endIndex ..< base.endIndex] }
 
         let separator = base[index...].firstIndex(where: isSeparator)
@@ -43,7 +43,7 @@ extension LazySplitKeepingCollection: Collection {
 
     func index(after i: Index) -> Index {
         guard let index = i.index,
-            index == base.endIndex
+            index != base.endIndex
             else { return endIndex }
         guard let separator = base[index...].firstIndex(where: isSeparator)
             else { return .index(base.endIndex) }
@@ -60,8 +60,10 @@ extension LazySplitKeepingCollection: BidirectionalCollection where Base: Bidire
     }
 }
 
+extension LazySplitKeepingCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
-    func splitKeeping(
+    func splitKeepingEmptySubsequences(
         isSeparator: @escaping (Elements.Element) -> Bool
     ) -> LazySplitKeepingCollection<Elements> {
         LazySplitKeepingCollection(
@@ -72,7 +74,7 @@ extension LazyCollectionProtocol {
 }
 
 extension LazyCollectionProtocol where Elements.Element: Equatable {
-    func split(
+    func splitKeepingEmptySubsequences(
         separator: Elements.Element
     ) -> LazySplitKeepingCollection<Elements> {
         LazySplitKeepingCollection(

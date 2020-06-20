@@ -3,19 +3,21 @@ import XCTest
 
 final class IteratorsTests: XCTestCase {
     func test() {
-        let chain = AnySequence([1,2,3,4,5]).lazy.chain(other: AnySequence(6...10).lazy)
+        let chain = AnySequence([1,2,3,4,5]).lazy.chain(AnySequence(6...10).lazy)
         XCTAssertEqual([1,2,3,4,5,6,7,8,9,10], Array(chain))
     }
 
     func test1() {
         let chain = sequence(first: 1) { $0 == 10 ? nil : $0 + 1 }
             .lazy
-            .chain(other: sequence(first: 10) { $0 >= 100 ? nil : $0 * 2 })
+            .chain(sequence(first: 10) { $0 >= 100 ? nil : $0 * 2 })
+            .map { $0 }
         XCTAssertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 20, 40, 80, 160], Array(chain))
     }
 
     func test2() {
         let cycle = sequence(first: 1) { $0 == 10 ? nil : $0 + 1 }
+            .lazy
             .cycled()
             .prefix(20)
         XCTAssertEqual([1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10], Array(cycle))
@@ -66,5 +68,47 @@ final class IteratorsTests: XCTestCase {
 
     func test8() {
         XCTAssertEqual(Array(repeatForever(element: 1).prefix(5)), [1,1,1,1,1])
+    }
+
+    func test9() {
+        XCTAssertEqual(
+            ["", "", "", "ab", "cdef", "", "", "ghi", "", "", "j", "", "", "k", "", "lm", "", "n", "", "", ""],
+            Array("...ab.cdef...ghi...j...k..lm..n...".lazy.split(separator: ".", omittingEmptySubsequences: false))
+        )
+    }
+
+    func test10() {
+        XCTAssertEqual(
+            ["ab", "cdef", "ghi", "j", "k", "lm", "n"],
+            Array("...ab.cdef...ghi...j...k..lm..n...".lazy.split(separator: ".", omittingEmptySubsequences: true))
+        )
+    }
+
+    func test11() {
+        XCTAssertEqual(
+            ["", "", "", "ab", "cdef", "", "", "ghi", "", "", "j", "", "", "k", "", "lm", "", "n", "", "", ""],
+            Array("...ab.cdef...ghi...j...k..lm..n...".lazy.splitKeepingEmptySubsequences(separator: "."))
+        )
+    }
+
+    func test12() {
+        XCTAssertEqual(
+            ["ab", "cdef", "ghi", "j", "k", "lm", "n"],
+            Array("...ab.cdef...ghi...j...k..lm..n...".lazy.splitOmittingEmptySubsequences(separator: "."))
+        )
+    }
+
+    func test13() {
+        XCTAssertEqual(
+            [[1, 2, 3], [2, 3, 4], [3, 4, 5]],
+            (1 ... 5).windows(of: 3)?.map(Array.init)
+        )
+    }
+
+    func test14() {
+        XCTAssertEqual(
+            [[1, 2, 3], [2, 3, 4], [3, 4, 5]],
+            (1 ... 5).lazy.windows(of: 3)?.map(Array.init)
+        )
     }
 }

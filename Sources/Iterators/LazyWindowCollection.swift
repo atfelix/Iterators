@@ -36,6 +36,8 @@ extension LazyWindowCollection: BidirectionalCollection where Base: Bidirectiona
 
 extension LazyWindowCollection: RandomAccessCollection where Base: RandomAccessCollection {}
 
+extension LazyWindowCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
     func windows(
         of size: Int

@@ -24,6 +24,8 @@ extension InspectSequence: Sequence {
     }
 }
 
+extension InspectSequence: LazySequenceProtocol {}
+
 extension Sequence {
     func inspect(
         _ closure: @escaping (Self.Element) -> Void

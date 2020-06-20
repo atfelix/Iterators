@@ -42,7 +42,7 @@ extension LazySplitOmittingStringSequence: LazySequenceProtocol {
     typealias Elements = LazySplitOmittingStringSequence
 }
 
-extension LazySequenceProtocol where Elements == String{
+extension LazySequenceProtocol where Elements == String {
     func splitOmittingEmptySequences(
         _ isSeparator: @escaping (String.Element) -> Bool
     ) -> LazySplitOmittingStringSequence {

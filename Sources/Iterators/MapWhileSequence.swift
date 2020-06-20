@@ -22,6 +22,8 @@ extension MapWhileSequence: Sequence {
     }
 }
 
+extension MapWhileSequence: LazySequenceProtocol {}
+
 extension Sequence {
     func mapWhile<A>(
         _ transform: @escaping (Self.Element) -> A?

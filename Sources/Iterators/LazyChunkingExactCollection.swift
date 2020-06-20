@@ -35,6 +35,8 @@ extension LazyChunkingExactCollection: BidirectionalCollection where Base: Bidir
 
 extension LazyChunkingExactCollection: RandomAccessCollection where Base: RandomAccessCollection {}
 
+extension LazyChunkingExactCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
     func chunkExactly(
         by size: Int

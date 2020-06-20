@@ -75,4 +75,15 @@ extension LazySequenceProtocol where Elements == String {
             isSeparator: { $0 == separator }
         )
     }
+
+    func split(
+        omittingEmptySubsequences: Bool,
+        isSeparator: @escaping (String.Element) -> Bool
+    ) -> LazySplitStringSequence {
+        LazySplitStringSequence(
+            base: elements,
+            omittingEmptySubsequences: omittingEmptySubsequences,
+            isSeparator: isSeparator
+        )
+    }
 }

@@ -29,7 +29,13 @@ struct LazySplitOmittingCollection<Base: Collection> {
 }
 
 extension LazySplitOmittingCollection: Collection {
-    var startIndex: Index { .index(base.startIndex) }
+    var startIndex: Index {
+        var index = base.startIndex
+        while index < base.endIndex, isSeparator(base[index]) {
+            base.formIndex(after: &index)
+        }
+        return .index(index)
+    }
     var endIndex: Index { .ended }
 
     subscript(position: Index) -> Base.SubSequence {
@@ -59,8 +65,10 @@ extension LazySplitOmittingCollection: BidirectionalCollection where Base: Bidir
     }
 }
 
+extension LazySplitOmittingCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
-    func splitOmitting(
+    func splitOmittingEmptySubsequences(
         isSeparator: @escaping (Elements.Element) -> Bool
     ) -> LazySplitOmittingCollection<Elements> {
         LazySplitOmittingCollection(
@@ -71,7 +79,7 @@ extension LazyCollectionProtocol {
 }
 
 extension LazyCollectionProtocol where Elements.Element: Equatable {
-    func splitOmitting(
+    func splitOmittingEmptySubsequences(
         separator: Elements.Element
     ) -> LazySplitOmittingCollection<Elements> {
         LazySplitOmittingCollection(

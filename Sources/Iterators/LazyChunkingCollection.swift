@@ -36,6 +36,8 @@ extension LazyChunkingCollection: BidirectionalCollection where Base: Bidirectio
 
 extension LazyChunkingCollection: RandomAccessCollection where Base: RandomAccessCollection {}
 
+extension LazyChunkingCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
     func chunks(
         of size: Int,

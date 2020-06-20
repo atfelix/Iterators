@@ -28,6 +28,8 @@ extension LazyChunkingInexactCollection: BidirectionalCollection where Base: Bid
 
 extension LazyChunkingInexactCollection: RandomAccessCollection where Base: RandomAccessCollection {}
 
+extension LazyChunkingInexactCollection: LazyCollectionProtocol {}
+
 extension LazyCollectionProtocol {
     func chunksInexactly(
         by size: Int
