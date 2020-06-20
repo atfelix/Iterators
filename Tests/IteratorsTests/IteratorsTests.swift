@@ -2,19 +2,6 @@ import XCTest
 @testable import Iterators
 
 final class IteratorsTests: XCTestCase {
-    func test() {
-        let chain = AnySequence([1,2,3,4,5]).lazy.chain(AnySequence(6...10).lazy)
-        XCTAssertEqual([1,2,3,4,5,6,7,8,9,10], Array(chain))
-    }
-
-    func test1() {
-        let chain = sequence(first: 1) { $0 == 10 ? nil : $0 + 1 }
-            .lazy
-            .chain(sequence(first: 10) { $0 >= 100 ? nil : $0 * 2 })
-            .map { $0 }
-        XCTAssertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 20, 40, 80, 160], Array(chain))
-    }
-
     func test2() {
         let cycle = sequence(first: 1) { $0 == 10 ? nil : $0 + 1 }
             .lazy
