@@ -1,28 +1,35 @@
-struct LazyChunkingInexactCollection<Base: Collection> {
-    let base: Base
-    let size: Int
+/// A lazy collection which produces non-overlapping chunks with `size`
+/// elements of the base collection.
+public struct LazyChunkingInexactCollection<Base: Collection> {
+    internal let base: Base
+    internal let size: Int
 }
 
 extension LazyChunkingInexactCollection: Collection {
-    typealias Index = Base.Index
+    public typealias Index = Base.Index
 
-    var startIndex: Index { base.startIndex }
-    var endIndex: Index { base.endIndex}
+    public var startIndex: Index { base.startIndex }
+    public var endIndex: Index { base.endIndex}
 
-    subscript(position: Base.Index) -> Base.SubSequence {
+    public subscript(position: Base.Index) -> Base.SubSequence {
         let nextIndex = base.index(position, offsetBy: size, limitedBy: endIndex) ?? endIndex
         return base[position ..< nextIndex]
     }
 
-    func index(after i: Base.Index) -> Base.Index {
+    public func index(after i: Base.Index) -> Base.Index {
         base.index(i, offsetBy: size, limitedBy: endIndex) ?? endIndex
     }
 }
 
 extension LazyChunkingInexactCollection: BidirectionalCollection where Base: BidirectionalCollection {
-    func index(before i: Index) -> Index {
-        let offset = i == endIndex ? base.count % size + 1 : size
-        return base.index(i, offsetBy: -offset, limitedBy: startIndex) ?? startIndex
+    public func index(before i: Index) -> Index {
+        if i == endIndex {
+            let remainder = base.count % size
+            return base.index(i, offsetBy: remainder == 0 ? -size : -remainder, limitedBy: startIndex) ?? startIndex
+        }
+        else {
+            return base.index(i, offsetBy: -size, limitedBy: startIndex) ?? startIndex
+        }
     }
 }
 
@@ -31,7 +38,10 @@ extension LazyChunkingInexactCollection: RandomAccessCollection where Base: Rand
 extension LazyChunkingInexactCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol {
-    func chunksInexactly(
+    /// Returns a collection that provides non-overlapping chunks of `self`.
+    ///
+    /// - Parameter size: The size of the desired chunks
+    public func chunksInexactly(
         by size: Int
     ) -> LazyChunkingInexactCollection<Elements> {
         LazyChunkingInexactCollection(base: elements, size: size)
