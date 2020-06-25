@@ -1,19 +1,30 @@
-struct LazyChunkingSequence<Base: Sequence> {
-    let base: Base
-    let size: Int
-    let exact: Bool
+/// A sequence of non-overlapping arrays of elements of size given by `size`
+/// and will not include the final array if `exact` is `true` and the final
+/// subsequence fewer than `size` elements
+public struct LazyChunkingSequence<Base: Sequence> {
+    internal let base: Base
+    internal let size: Int
+    internal let exact: Bool
 }
 
 extension LazyChunkingSequence {
-    struct Iterator {
-        var base: Base.Iterator
-        let size: Int
-        let exact: Bool
+    /// An iterator that provides non-overlapping arrays of elements of given by `size`
+    /// and will not include the final array if `exact` is `true` and the final
+    /// array of elements has fewer than `size elements`
+    public struct Iterator {
+        internal var base: Base.Iterator
+        internal let size: Int
+        internal let exact: Bool
     }
 }
 
 extension LazyChunkingSequence.Iterator: IteratorProtocol {
-    mutating func next() -> [Base.Element]? {
+    /// Returns the next non-overlapping chunk remaining in the base sequence
+    /// if there are any more elements and the chunk has exactly `size` elements
+    /// or the chunk is the last chunk of the sequence and `exact` is false
+    ///
+    /// - Complexity: _O(`size`)_
+    public mutating func next() -> [Base.Element]? {
         guard let element = base.next() else { return nil }
 
         var elements = [element]
@@ -27,7 +38,7 @@ extension LazyChunkingSequence.Iterator: IteratorProtocol {
 }
 
 extension LazyChunkingSequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(
             base: base.makeIterator(),
             size: size,
@@ -37,7 +48,13 @@ extension LazyChunkingSequence: Sequence {
 }
 
 extension LazySequenceProtocol {
-    func chunks(
+    /// Returns a `LazyChunkingSequence`
+    ///
+    /// - Parameter size:  The size of the chunks
+    /// - Parameter exact:
+    ///     The boolean indicating whether or not to include the last subsequence
+    ///     when it doesn't contain `size` elements
+    public func chunks(
         of size: Int,
         exact: Bool = false
     ) -> LazyChunkingSequence<Elements> {

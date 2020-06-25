@@ -72,7 +72,6 @@ extension LazyCollectionProtocol {
     /// - Parameter exact:
     ///     The boolean indicating whether or not to include the last subsequence
     ///     when it doesn't contain `size` elements
-    ///
     public func chunks(
         of size: Int,
         exact: Bool = false
