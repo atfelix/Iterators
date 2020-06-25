@@ -1,5 +1,5 @@
 /// A lazy sequence which produces non-overlapping chunks with `size`
-/// elements of the base collection.  If the last chunk has fewer than
+/// elements of the base sequence.  If the last chunk has fewer than
 ///  `size` elements, it is not produced by this sequence.
 public struct LazyChunkingExactSequence<Base: Sequence> {
     internal let base: Base
@@ -9,7 +9,7 @@ public struct LazyChunkingExactSequence<Base: Sequence> {
 extension LazyChunkingExactSequence {
     /// An iterator which produces non-overlapping chunks of `base`
     /// sequence where the last chunk is not produce if it has fewer
-    /// than `size` elements
+    /// than `size` elements.
     public struct Iterator {
         internal var base: Base.Iterator
         internal let size: Int

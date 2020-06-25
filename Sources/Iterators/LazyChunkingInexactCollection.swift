@@ -41,7 +41,7 @@ extension LazyCollectionProtocol {
     /// Returns a collection that provides non-overlapping chunks of `self`.
     ///
     /// - Parameter size: The size of the desired chunks
-    public func chunksInexactly(
+    public func chunkInexactly(
         by size: Int
     ) -> LazyChunkingInexactCollection<Elements> {
         LazyChunkingInexactCollection(base: elements, size: size)
