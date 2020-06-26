@@ -1,18 +1,23 @@
-struct LazySplitKeepingStringSequence {
-    let base: String
-    let isSeparator: (String.Element) -> Bool
+/// A sequence of non-overlapping substrings separated by breaks determined
+/// by `isSeparator`.  This sequence keeps empty substrings.
+public struct LazySplitKeepingStringSequence {
+    internal let base: String
+    internal let isSeparator: (String.Element) -> Bool
 }
 
 extension LazySplitKeepingStringSequence {
-    struct Iterator {
-        var base: String.Iterator
-        var current: String.Element? = nil
-        let isSeparator: (String.Element) -> Bool
+    /// An iterator traversing `base` and return substrings separated by `isSeparator`
+    public struct Iterator {
+        internal var base: String.Iterator
+        internal var current: String.Element? = nil
+        internal let isSeparator: (String.Element) -> Bool
     }
 }
 
 extension LazySplitKeepingStringSequence.Iterator: IteratorProtocol {
-    mutating func next() -> Substring? {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public mutating func next() -> Substring? {
         var result: Substring? = nil
         let previous = self.current
         self.current = base.next()
@@ -31,7 +36,7 @@ extension LazySplitKeepingStringSequence.Iterator: IteratorProtocol {
 }
 
 extension LazySplitKeepingStringSequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(
             base: base.makeIterator(),
             isSeparator: isSeparator
@@ -40,11 +45,15 @@ extension LazySplitKeepingStringSequence: Sequence {
 }
 
 extension LazySplitKeepingStringSequence: LazySequenceProtocol {
-    typealias Elements = LazySplitKeepingStringSequence
+    public typealias Elements = LazySplitKeepingStringSequence
 }
 
 extension LazySequenceProtocol where Elements == String {
-    func splitKeeping(
+    /// Returns a `LazySplitKeepingStringSequence` of substrings
+    ///
+    /// - Parameter isSeparator:
+    ///     A predicate indicating when the sequences should split
+    public func splitKeepingEmptySubsequences(
         isSeparator: @escaping (String.Element) -> Bool
     ) -> LazySplitKeepingStringSequence {
         LazySplitKeepingStringSequence(
@@ -53,7 +62,11 @@ extension LazySequenceProtocol where Elements == String {
         )
     }
 
-    func splitKeeping(
+    /// Returns a `LazySplitKeepingSequence` of substrings
+    ///
+    /// - Parameter separator:
+    ///     An `String.Element` indicating when the substring should split
+    public func splitKeepingEmptySubsequences(
         separator: String.Element
     ) -> LazySplitKeepingStringSequence {
         LazySplitKeepingStringSequence(

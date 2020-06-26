@@ -17,7 +17,7 @@ extension LazySplitKeepingSequence {
 
 extension LazySplitKeepingSequence.Iterator: IteratorProtocol {
     /// - Complexity:
-    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    ///     _O(k)_ where `k` is the number of elements that return `false` from `isSeparator`.
     public mutating func next() -> [Base.Element]? {
         var result: [Base.Element]? = nil
         let previous = self.current
