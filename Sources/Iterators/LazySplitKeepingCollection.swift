@@ -43,10 +43,10 @@ extension LazySplitKeepingCollection: Collection {
 
     func index(after i: Index) -> Index {
         guard let index = i.index,
-            index != base.endIndex
-            else { return endIndex }
-        guard let separator = base[index...].firstIndex(where: isSeparator)
-            else { return .index(base.endIndex) }
+            index != base.endIndex,
+            let separator = base[index...].firstIndex(where: isSeparator)
+        else { return endIndex }
+
         return .index(base.index(after: separator))
     }
 }

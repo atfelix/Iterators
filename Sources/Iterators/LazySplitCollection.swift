@@ -1,5 +1,8 @@
-struct LazySplitCollection<Base: Collection> {
-    enum Index: Comparable {
+/// A collection of subsequences separator by into non-overlapping subsequences
+/// where breaks are determined by `isSeparator`.  These subsequences will
+/// omit empty subsequences if and only if `omittingEmptySubsequences` is `true`.
+public struct LazySplitCollection<Base: Collection> {
+    public enum Index: Comparable {
         case index(Base.Index)
         case ended
 
@@ -12,7 +15,7 @@ struct LazySplitCollection<Base: Collection> {
             }
         }
 
-        static func < (lhs: Index, rhs: Index) -> Bool {
+        public static func < (lhs: Index, rhs: Index) -> Bool {
             switch (lhs, rhs) {
             case let (.index(left), .index(right)):
                 return left < right
@@ -24,13 +27,13 @@ struct LazySplitCollection<Base: Collection> {
         }
     }
 
-    let base: Base
-    let omittingEmptySubsequences: Bool
-    let isSeparator: (Base.Element) -> Bool
+    internal let base: Base
+    internal let omittingEmptySubsequences: Bool
+    internal let isSeparator: (Base.Element) -> Bool
 }
 
 extension LazySplitCollection: Collection {
-    var startIndex: Index {
+    public var startIndex: Index {
         if omittingEmptySubsequences {
             var index = base.startIndex
             while index < base.endIndex, isSeparator(base[index]) {
@@ -42,10 +45,11 @@ extension LazySplitCollection: Collection {
             return .index(base.startIndex)
         }
     }
-    var endIndex: Index { .ended }
+    public var endIndex: Index { .ended }
 
-    /// Not _O(1)_
-    subscript(position: Index) -> Base.SubSequence {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public subscript(position: Index) -> Base.SubSequence {
         guard let index = position.index else { return base[base.endIndex ..< base.endIndex] }
 
         if !omittingEmptySubsequences && index == base.endIndex {
@@ -64,11 +68,13 @@ extension LazySplitCollection: Collection {
         }
     }
 
-    func index(after i: Index) -> Index {
-        guard let index = i.index else { return .ended }
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public func index(after i: Index) -> Index {
+        guard let index = i.index else { return endIndex }
 
         if !omittingEmptySubsequences && index == base.endIndex {
-            return .ended
+            return endIndex
         }
 
         if omittingEmptySubsequences {
@@ -80,15 +86,15 @@ extension LazySplitCollection: Collection {
         }
         else {
             guard let separator = base[index...].firstIndex(where: isSeparator)
-                else { return .index(base.endIndex) }
+                else { return endIndex }
             return .index(base.index(after: separator))
         }
     }
 }
 
 extension LazySplitCollection: BidirectionalCollection where Base: BidirectionalCollection {
-    func index(before i: Index) -> Index {
-        guard let index = i.index else { return .ended }
+    public func index(before i: Index) -> Index {
+        guard let index = i.index else { return endIndex }
         let reversed = base[..<base.index(before: index)].reversed()
         let separator = reversed.firstIndex(where: isSeparator)
         return .index(separator?.base ?? base.startIndex)
@@ -98,7 +104,13 @@ extension LazySplitCollection: BidirectionalCollection where Base: Bidirectional
 extension LazySplitCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol {
-    func split(
+    /// Returns a `LazySplitCollection` of `elements`
+    ///
+    /// - Parameter omittingEmptySubsequences:
+    ///     A `Bool` which indicates whether empty sequences should be omitted or not
+    /// - Parameter isSeparator:
+    ///     A predicate indicating when the subsequences should split
+    public func split(
         omittingEmptySubsequences: Bool = true,
         isSeparator: @escaping (Elements.Element) -> Bool
     ) -> LazySplitCollection<Elements> {
@@ -111,7 +123,13 @@ extension LazyCollectionProtocol {
 }
 
 extension LazyCollectionProtocol where Elements.Element: Equatable {
-    func split(
+    /// Returns a `LazySplitCollection` of `elements`
+    ///
+    /// - Parameter separator:
+    ///     An `Elements.Element` indicating when the subsequences should split
+    /// - Parameter omittingEmptySubsequences:
+    ///     A `Bool` which indicates whether empty sequences should be omitted or not
+    public func split(
         separator: Elements.Element,
         omittingEmptySubsequences: Bool = true
     ) -> LazySplitCollection<Elements> {
