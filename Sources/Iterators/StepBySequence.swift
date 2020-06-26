@@ -1,4 +1,4 @@
-/// A sequence which yields the first element in windows of `stepSize` gaps
+/// A sequence which yields the first element in chunks of `stepSize` elements
 public struct StepBySequence<Base: Sequence> {
     internal let base: Base
     internal let stepSize: Int
@@ -11,7 +11,7 @@ public struct StepBySequence<Base: Sequence> {
 }
 
 extension StepBySequence {
-    /// An iterator which yields the first element in windows of `stepSize` gaps
+    /// An iterator which yields the first element in chunks of `stepSize` elements
     public struct Iterator {
         internal var base: Base.Iterator
         internal var current: Base.Element?
@@ -26,6 +26,7 @@ extension StepBySequence {
 }
 
 extension StepBySequence.Iterator: IteratorProtocol {
+    /// - Complexity: _O(stepSize)_
     public mutating func next() -> Base.Element? {
         guard let first = base.next() else { return nil }
         (0 ..< (stepSize - 1)).forEach { _ in _ = base.next() }

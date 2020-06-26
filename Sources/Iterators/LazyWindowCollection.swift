@@ -22,7 +22,7 @@ extension LazyWindowCollection: Collection {
     /// - Parameter position: an index of the base collection
     ///
     /// - Note:
-    ///     This algorithm _O(1)_ only if the base collection conforms to
+    ///     This algorithm is _O(1)_ only if the base collection conforms to
     ///     `RandomAccessCollection`
     public subscript(position: Index) -> Base.SubSequence {
         guard let endIndex = base.index(position, offsetBy: size, limitedBy: base.endIndex) else { return base[base.endIndex ..< base.endIndex] }
