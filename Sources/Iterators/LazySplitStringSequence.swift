@@ -1,20 +1,26 @@
-struct LazySplitStringSequence {
-    let base: String
-    let omittingEmptySubsequences: Bool
-    let isSeparator: (String.Element) -> Bool
+/// A sequence of substrings separated into non-overlapping substrings
+/// where breaks are determined by `isSeparator`.  This sequence omits empty
+/// subsequences if and only if `omittingEmptySubsequences` is `true`.
+public struct LazySplitStringSequence {
+    internal let base: String
+    internal let omittingEmptySubsequences: Bool
+    internal let isSeparator: (String.Element) -> Bool
 }
 
 extension LazySplitStringSequence {
-    struct Iterator {
-        var base: String.Iterator
-        var current: String.Element? = nil
-        let omittingEmptySubsequences: Bool
-        let isSeparator: (String.Element) -> Bool
+    /// An iterator traversing `base` and return arrays of elements separated by `isSeparator`
+    public struct Iterator {
+        internal var base: String.Iterator
+        internal var current: String.Element? = nil
+        internal let omittingEmptySubsequences: Bool
+        internal let isSeparator: (String.Element) -> Bool
     }
 }
 
 extension LazySplitStringSequence.Iterator: IteratorProtocol {
-    mutating func next() -> Substring? {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of elements that return `false` from `isSeparator`.
+    public mutating func next() -> Substring? {
         if omittingEmptySubsequences {
             var result: Substring? = nil
             self.current = base.next()
@@ -51,7 +57,7 @@ extension LazySplitStringSequence.Iterator: IteratorProtocol {
 }
 
 extension LazySplitStringSequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(
             base: base.makeIterator(),
             omittingEmptySubsequences: omittingEmptySubsequences,
@@ -61,11 +67,17 @@ extension LazySplitStringSequence: Sequence {
 }
 
 extension LazySplitStringSequence: LazySequenceProtocol {
-    typealias Elements = LazySplitStringSequence
+    public typealias Elements = LazySplitStringSequence
 }
 
 extension LazySequenceProtocol where Elements == String {
-    func split(
+    /// Returns a `LazySplitStringSequence` of `elements`
+    ///
+    /// - Parameter separator:
+    ///     An `String.Element` indicating when the sequences should split
+    /// - Parameter omittingEmptySubsequences:
+    ///     A `Bool` indicating whether empty subsequences should be omitted
+    public func split(
         separator: String.Element,
         omittingEmptySubsequences: Bool
     ) -> LazySplitStringSequence {
@@ -76,7 +88,13 @@ extension LazySequenceProtocol where Elements == String {
         )
     }
 
-    func split(
+    /// Returns a `LazySplitStringSequence` of `elements`
+    ///
+    /// - Parameter omittingEmptySubsequences:
+    ///     A `Bool` indicating whether empty subsequences should be omitted
+    /// - Parameter isSeparator:
+    ///     A predicate indicating when the substrings should split
+    public func split(
         omittingEmptySubsequences: Bool,
         isSeparator: @escaping (String.Element) -> Bool
     ) -> LazySplitStringSequence {

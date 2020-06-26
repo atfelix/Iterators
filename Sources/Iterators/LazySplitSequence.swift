@@ -91,10 +91,10 @@ extension LazySequenceProtocol where Elements.Element: Equatable {
 extension LazySequenceProtocol {
     /// Returns a `LazySplitSequence` of `elements`
     ///
+    /// - Parameter omittingEmptySubsequences:
+    ///     A `Bool` indicating whether empty subsequences should be omitted
     /// - Parameter isSeparator:
     ///     A predicate indicating when the sequences should split
-    /// - Parameter omittingEmptySubsequences:
-    ///     AA `Bool` indicating whether empty subsequences should be omitted
     public func split(
         omittingEmptySubsequences: Bool = true,
         isSeparator: @escaping (Elements.Element) -> Bool
