@@ -1,8 +1,9 @@
-struct StepBySequence<Base: Sequence> {
-    let base: Base
-    let stepSize: UInt
+/// A sequence which yields the first element in windows of `stepSize` gaps
+public struct StepBySequence<Base: Sequence> {
+    internal let base: Base
+    internal let stepSize: Int
 
-    init(base: Base, stepSize: UInt) {
+    internal init(base: Base, stepSize: Int) {
         precondition(stepSize > 0)
         self.base = base
         self.stepSize = stepSize
@@ -10,12 +11,13 @@ struct StepBySequence<Base: Sequence> {
 }
 
 extension StepBySequence {
-    struct Iterator {
-        var base: Base.Iterator
-        var current: Base.Element?
-        let stepSize: UInt
+    /// An iterator which yields the first element in windows of `stepSize` gaps
+    public struct Iterator {
+        internal var base: Base.Iterator
+        internal var current: Base.Element?
+        internal let stepSize: Int
 
-        init(base: Base.Iterator, stepSize: UInt) {
+        internal init(base: Base.Iterator, stepSize: Int) {
             precondition(stepSize > 0)
             self.base = base
             self.stepSize = stepSize
@@ -24,7 +26,7 @@ extension StepBySequence {
 }
 
 extension StepBySequence.Iterator: IteratorProtocol {
-    mutating func next() -> Base.Element? {
+    public mutating func next() -> Base.Element? {
         guard let first = base.next() else { return nil }
         (0 ..< (stepSize - 1)).forEach { _ in _ = base.next() }
         return first
@@ -32,7 +34,7 @@ extension StepBySequence.Iterator: IteratorProtocol {
 }
 
 extension StepBySequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(base: base.makeIterator(), stepSize: stepSize)
     }
 }
@@ -40,7 +42,10 @@ extension StepBySequence: Sequence {
 extension StepBySequence: LazySequenceProtocol {}
 
 extension Sequence {
-    func stepBy(size: UInt) -> StepBySequence<Self> {
+    /// Returns a `StepBySequence`
+    ///
+    /// - Parameter size: The step size 
+    public func stepBy(size: Int) -> StepBySequence<Self> {
         precondition(size > 0)
         return StepBySequence(base: self, stepSize: size)
     }
