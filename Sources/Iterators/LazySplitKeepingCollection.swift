@@ -1,4 +1,4 @@
-/// A collection of subsequences separator by into non-overlapping subsequences
+/// A collection of subsequences separated into non-overlapping subsequences
 /// where breaks are determined by `isSeparator`.  This collection keeps empty
 /// subsequences.
 public struct LazySplitKeepingCollection<Base: Collection> {
