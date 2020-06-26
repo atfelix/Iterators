@@ -48,7 +48,7 @@ extension LazySplitCollection: Collection {
     public var endIndex: Index { .ended }
 
     /// - Complexity:
-    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    ///     _O(k)_ where `k` is the number of elements that return `false` from `isSeparator`.
     public subscript(position: Index) -> Base.SubSequence {
         guard let index = position.index else { return base[base.endIndex ..< base.endIndex] }
 
@@ -69,7 +69,7 @@ extension LazySplitCollection: Collection {
     }
 
     /// - Complexity:
-    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    ///     _O(k)_ where `k` is the number of elements that return `false` from `isSeparator`.
     public func index(after i: Index) -> Index {
         guard let index = i.index else { return endIndex }
 
