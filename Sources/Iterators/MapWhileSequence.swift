@@ -1,23 +1,26 @@
-struct MapWhileSequence<Base: Sequence, A> {
-    let base: Base
-    let transform: (Base.Element) -> A?
+/// A sequence that maps the base elements using `transform` and stops
+/// when the transform returns `nil`.
+public struct MapWhileSequence<Base: Sequence, A> {
+    internal let base: Base
+    internal let transform: (Base.Element) -> A?
 }
 
 extension MapWhileSequence {
-    struct Iterator {
-        var base: Base.Iterator
-        let transform: (Base.Element) -> A?
+    /// An iterator that provides mapped elements until it provides `nil`
+    public struct Iterator {
+        internal var base: Base.Iterator
+        internal let transform: (Base.Element) -> A?
     }
 }
 
 extension MapWhileSequence.Iterator: IteratorProtocol {
-    mutating func next() -> A? {
+    public mutating func next() -> A? {
         base.next().flatMap(transform)
     }
 }
 
 extension MapWhileSequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(base: base.makeIterator(), transform: transform)
     }
 }
@@ -25,7 +28,16 @@ extension MapWhileSequence: Sequence {
 extension MapWhileSequence: LazySequenceProtocol {}
 
 extension Sequence {
-    func mapWhile<A>(
+    /// Returns a `MapWhileSequence`
+    ///
+    /// - Parameter transform:
+    ///     A transformation that maps `Self.Element` to an A?
+    ///
+    /// - Note:
+    ///     The transform will be called _n + 1_ times where
+    ///     _n_ is the number of elements that return non-optional
+    ///     values.
+    public func mapWhile<A>(
         _ transform: @escaping (Self.Element) -> A?
     ) -> MapWhileSequence<Self, A> {
         MapWhileSequence(base: self, transform: transform)
