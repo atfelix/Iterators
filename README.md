@@ -57,7 +57,7 @@ Array("...ab.cdef...ghi...j...k..lm..n...".lazy.splitOmittingEmptySubsequences(s
 ## `windows`
 
 ```swift
-(1 ... 5).windows(of: 3)?.map(Array.init) == [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+(1 ... 5).windows(of: 3).map(Array.init) == [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
 ```
 
 ## `mapWhile`

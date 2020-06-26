@@ -44,7 +44,7 @@ extension StepBySequence: LazySequenceProtocol {}
 extension Sequence {
     /// Returns a `StepBySequence`
     ///
-    /// - Parameter size: The step size 
+    /// - Parameter size: The step size
     public func stepBy(size: Int) -> StepBySequence<Self> {
         precondition(size > 0)
         return StepBySequence(base: self, stepSize: size)
