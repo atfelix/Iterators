@@ -73,8 +73,8 @@ Peeking only applies to iterators.  It turns an iterator into an iterator that c
 ```swift
 var iterator = [1,2,3].makeIterator().peekable()
 XCTAssertEqual(1, iterator.peek())
-XCTAssertEqual(2, iterator.next())
 XCTAssertEqual(1, iterator.next())
+XCTAssertEqual(2, iterator.next())
 XCTAssertEqual(3, iterator.peek())
 XCTAssertEqual(3, iterator.peek())
 XCTAssertEqual(3, iterator.next())

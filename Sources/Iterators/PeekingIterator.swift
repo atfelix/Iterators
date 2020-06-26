@@ -1,12 +1,13 @@
-struct PeekingIterator<Base: IteratorProtocol> {
-    var base: Base
-    var current: Base.Element?
+/// An iterator that allows peeking on the next element
+public struct PeekingIterator<Base: IteratorProtocol> {
+    internal var base: Base
+    internal var current: Base.Element?
 
-    init(base: Base) {
+    internal init(base: Base) {
         self.base = base
     }
 
-    mutating func peek() -> Base.Element? {
+    public mutating func peek() -> Base.Element? {
         if current == nil {
            current = base.next()
         }
@@ -15,7 +16,7 @@ struct PeekingIterator<Base: IteratorProtocol> {
 }
 
 extension PeekingIterator: IteratorProtocol {
-    mutating func next() -> Base.Element? {
+    public mutating func next() -> Base.Element? {
         let temp = current
         current = base.next()
 
@@ -24,7 +25,8 @@ extension PeekingIterator: IteratorProtocol {
 }
 
 extension IteratorProtocol {
-    func peekable() -> PeekingIterator<Self> {
+    /// Returns a `PeekingIterator`
+    public func peekable() -> PeekingIterator<Self> {
         PeekingIterator(base: self)
     }
 }
