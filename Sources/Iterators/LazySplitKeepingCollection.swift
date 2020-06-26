@@ -1,5 +1,8 @@
-struct LazySplitKeepingCollection<Base: Collection> {
-    enum Index: Comparable {
+/// A collection of subsequences separator by into non-overlapping subsequences
+/// where breaks are determined by `isSeparator`.  This collection keeps empty
+/// subsequences.
+public struct LazySplitKeepingCollection<Base: Collection> {
+    public enum Index: Comparable {
         case index(Base.Index)
         case ended
 
@@ -12,7 +15,7 @@ struct LazySplitKeepingCollection<Base: Collection> {
             }
         }
 
-        static func < (lhs: Index, rhs: Index) -> Bool {
+        public static func < (lhs: Index, rhs: Index) -> Bool {
             switch (lhs, rhs) {
             case let (.index(left), .index(right)):
                 return left < right
@@ -24,15 +27,17 @@ struct LazySplitKeepingCollection<Base: Collection> {
         }
     }
 
-    let base: Base
-    let isSeparator: (Base.Element) -> Bool
+    internal let base: Base
+    internal let isSeparator: (Base.Element) -> Bool
 }
 
 extension LazySplitKeepingCollection: Collection {
-    var startIndex: Index { .index(base.startIndex) }
-    var endIndex: Index { .ended }
+    public var startIndex: Index { .index(base.startIndex) }
+    public var endIndex: Index { .ended }
 
-    subscript(position: Index) -> Base.SubSequence {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public subscript(position: Index) -> Base.SubSequence {
         guard let index = position.index,
             index != base.endIndex
             else { return base[base.endIndex ..< base.endIndex] }
@@ -41,7 +46,9 @@ extension LazySplitKeepingCollection: Collection {
         return base[index ..< (separator ?? base.endIndex)]
     }
 
-    func index(after i: Index) -> Index {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public func index(after i: Index) -> Index {
         guard let index = i.index,
             index != base.endIndex,
             let separator = base[index...].firstIndex(where: isSeparator)
@@ -52,7 +59,7 @@ extension LazySplitKeepingCollection: Collection {
 }
 
 extension LazySplitKeepingCollection: BidirectionalCollection where Base: BidirectionalCollection {
-    func index(before i: Index) -> Index {
+    public func index(before i: Index) -> Index {
         guard let index = i.index else { return endIndex }
         let reversed = base[..<base.index(before: index)].reversed()
         let separator = reversed.firstIndex(where: isSeparator)
@@ -63,7 +70,11 @@ extension LazySplitKeepingCollection: BidirectionalCollection where Base: Bidire
 extension LazySplitKeepingCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol {
-    func splitKeepingEmptySubsequences(
+    /// Returns a `LazySplitKeepingCollection` of `elements`
+    ///
+    /// - Parameter isSeparator:
+    ///     A predicate indicating when the subsequences should split
+    public func splitKeepingEmptySubsequences(
         isSeparator: @escaping (Elements.Element) -> Bool
     ) -> LazySplitKeepingCollection<Elements> {
         LazySplitKeepingCollection(
@@ -74,7 +85,11 @@ extension LazyCollectionProtocol {
 }
 
 extension LazyCollectionProtocol where Elements.Element: Equatable {
-    func splitKeepingEmptySubsequences(
+    /// Returns a `LazySplitKeepingCollection` of `elements`
+    ///
+    /// - Parameter separator:
+    ///     An `Elements.Element` indicating when the subsequences should split
+    public func splitKeepingEmptySubsequences(
         separator: Elements.Element
     ) -> LazySplitKeepingCollection<Elements> {
         LazySplitKeepingCollection(
