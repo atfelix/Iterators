@@ -9,7 +9,7 @@ final class LazyWindowCollectionTests: XCTestCase {
         )
     }
 
-    func testChunkInexactBidirectionalCollection() {
+    func testWindowBidirectionalCollection() {
         XCTAssertEqual(
             [98, 99, 100],
             Array((1 ... 100).lazy.windows(of: 3).last!)
@@ -23,3 +23,4 @@ final class LazyWindowCollectionTests: XCTestCase {
         )
     }
 }
+

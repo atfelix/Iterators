@@ -1,8 +1,11 @@
-struct LazyWindowSequence<Base: Sequence> {
-    let base: Base
-    let size: Int
+/// A lazy sequence which produces overlapping windows with `size`
+/// elements of the base sequence.  If the window size is larger than
+/// the base sequences size, then no windows are produced.
+public struct LazyWindowSequence<Base: Sequence> {
+    internal let base: Base
+    internal let size: Int
 
-    init(base: Base, size: Int) {
+    internal init(base: Base, size: Int) {
         precondition(size > 0)
 
         self.base = base
@@ -11,7 +14,10 @@ struct LazyWindowSequence<Base: Sequence> {
 }
 
 extension LazyWindowSequence {
-    struct Iterator {
+    /// An iterator which produces overlapping windows of `base`
+    /// sequence where if the window size is larger than the
+    /// sequence size, no window is produced.
+    public struct Iterator {
         var base: Base.Iterator
         let size: Int
         var currentWindow: [Base.Element] = []
@@ -19,7 +25,7 @@ extension LazyWindowSequence {
 }
 
 extension LazyWindowSequence.Iterator: IteratorProtocol {
-    mutating func next() -> [Base.Element]? {
+    public mutating func next() -> [Base.Element]? {
         if !currentWindow.isEmpty {
             currentWindow.removeFirst()
         }
@@ -36,7 +42,7 @@ extension LazyWindowSequence.Iterator: IteratorProtocol {
 }
 
 extension LazyWindowSequence: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(base: base.makeIterator(), size: size)
     }
 }
@@ -44,7 +50,12 @@ extension LazyWindowSequence: Sequence {
 extension LazyWindowSequence: LazySequenceProtocol {}
 
 extension LazySequenceProtocol {
-    func windows(
+    /// Returns a sequence that provides overlapping windows of `self`
+    /// where if `size` is larger than the sequence's size, then
+    /// no window is produced
+    ///
+    /// - Parameter size: The size of the desired chunks
+    public func windows(
         of size: Int
     ) -> LazyWindowSequence<Elements> {
         LazyWindowSequence(base: elements, size: size)
