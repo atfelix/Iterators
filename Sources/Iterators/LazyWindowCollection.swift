@@ -1,35 +1,42 @@
-struct LazyWindowCollection<Base: Collection> {
-    let base: Base
-    let size: Int
+/// A collection of overlapping subsequences of size given by `size`.
+public struct LazyWindowCollection<Base: Collection> {
+    internal let base: Base
+    internal let size: Int
 
-    init?(base: Base, size: Int) {
-        guard 0 < size && size <= base.count else { return nil }
+    internal init(base: Base, size: Int) {
+        precondition(0 < size)
         self.base = base
         self.size = size
     }
 }
 
 extension LazyWindowCollection: Collection {
-    typealias Index = Base.Index
+    public typealias Index = Base.Index
 
-    var startIndex: Base.Index { base.startIndex }
-    var endIndex: Base.Index {
+    public var startIndex: Base.Index { base.startIndex }
+    public var endIndex: Base.Index {
         base.index(base.endIndex, offsetBy: -(size - 1))
     }
-
-    subscript(position: Index) -> Base.SubSequence {
-        let endIndex = base.index(position, offsetBy: size, limitedBy: base.endIndex) ?? base.endIndex
+    /// Return a subsequence of the base collection at the given position
+    ///
+    /// - Parameter position: an index of the base collection
+    ///
+    /// - Note:
+    ///     This algorithm _O(1)_ only if the base collection conforms to
+    ///     `RandomAccessCollection`
+    public subscript(position: Index) -> Base.SubSequence {
+        guard let endIndex = base.index(position, offsetBy: size, limitedBy: base.endIndex) else { return base[base.endIndex ..< base.endIndex] }
         return base[position ..< endIndex]
     }
 
-    func index(after i: Base.Index) -> Base.Index {
+    public func index(after i: Base.Index) -> Base.Index {
         guard let _ = base.index(i, offsetBy: size, limitedBy: base.endIndex) else { return endIndex }
         return base.index(after: i)
     }
 }
 
 extension LazyWindowCollection: BidirectionalCollection where Base: BidirectionalCollection {
-    func index(before i: Base.Index) -> Base.Index {
+    public func index(before i: Base.Index) -> Base.Index {
         base.index(before: i)
     }
 }
@@ -39,9 +46,12 @@ extension LazyWindowCollection: RandomAccessCollection where Base: RandomAccessC
 extension LazyWindowCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol {
-    func windows(
+    /// Returns a `LazyWindowCollection`
+    ///
+    /// - Parameter size:  The size of the windows
+    public func windows(
         of size: Int
-    ) -> LazyWindowCollection<Elements>? {
+    ) -> LazyWindowCollection<Elements> {
         LazyWindowCollection(base: elements, size: size)
     }
 }
