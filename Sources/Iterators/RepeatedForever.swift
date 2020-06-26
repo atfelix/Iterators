@@ -1,27 +1,30 @@
-struct RepeatedForever<Element> {
-    let element: Element
+/// A sequence that repeats `element` indefinitely
+public struct RepeatedForever<Element> {
+    internal let element: Element
 }
 
 extension RepeatedForever {
-    struct Iterator {
-        let element: Element
+    // An iterator that repeats `element` indefinitely
+    public struct Iterator {
+        internal let element: Element
     }
 }
 
 extension RepeatedForever.Iterator: IteratorProtocol {
-    mutating func next() -> Element? {
+    public mutating func next() -> Element? {
         element
     }
 }
 
 extension RepeatedForever: Sequence {
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator(element: element)
     }
 }
 
 extension RepeatedForever: LazySequenceProtocol {}
 
-func repeatForever<Element>(element: Element) -> RepeatedForever<Element> {
+/// Returns a sequence that repeats `element` indefinitely
+public func repeatForever<Element>(element: Element) -> RepeatedForever<Element> {
     .init(element: element)
 }
