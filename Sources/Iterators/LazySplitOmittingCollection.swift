@@ -1,5 +1,8 @@
-struct LazySplitOmittingCollection<Base: Collection> {
-    enum Index: Comparable {
+/// A collection of subsequences separated into non-overlapping subsequences
+/// where breaks are determined by `isSeparator`.  This collection omits empty
+/// subsequences.
+public struct LazySplitOmittingCollection<Base: Collection> {
+    public enum Index: Comparable {
         case index(Base.Index)
         case ended
 
@@ -12,7 +15,7 @@ struct LazySplitOmittingCollection<Base: Collection> {
             }
         }
 
-        static func < (lhs: Index, rhs: Index) -> Bool {
+        public static func < (lhs: Index, rhs: Index) -> Bool {
             switch (lhs, rhs) {
             case let (.index(left), .index(right)):
                 return left < right
@@ -24,21 +27,24 @@ struct LazySplitOmittingCollection<Base: Collection> {
         }
     }
 
-    let base: Base
-    let isSeparator: (Base.Element) -> Bool
+    internal let base: Base
+    internal let isSeparator: (Base.Element) -> Bool
 }
 
 extension LazySplitOmittingCollection: Collection {
-    var startIndex: Index {
+    public var startIndex: Index {
         var index = base.startIndex
         while index < base.endIndex, isSeparator(base[index]) {
             base.formIndex(after: &index)
         }
         return .index(index)
     }
-    var endIndex: Index { .ended }
+    public var endIndex: Index { .ended }
 
-    subscript(position: Index) -> Base.SubSequence {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+
+    public subscript(position: Index) -> Base.SubSequence {
         guard let index = position.index else { return base[base.endIndex ..< base.endIndex] }
 
         guard let nextSeparatorIndex = base[index...].firstIndex(where: isSeparator)
@@ -47,7 +53,9 @@ extension LazySplitOmittingCollection: Collection {
         return base[index ..< nextSeparatorIndex]
     }
 
-    func index(after i: Index) -> Index {
+    /// - Complexity:
+    ///     _O(k)_ where `k` is the number of characters that return `false` from `isSeparator`.
+    public func index(after i: Index) -> Index {
         guard let index = i.index,
             let nextSeparatorIndex = base[index...].firstIndex(where: isSeparator),
             let nextNotSeparatorIndex = base[nextSeparatorIndex...].firstIndex(where: { !isSeparator($0) })
@@ -57,7 +65,7 @@ extension LazySplitOmittingCollection: Collection {
 }
 
 extension LazySplitOmittingCollection: BidirectionalCollection where Base: BidirectionalCollection {
-    func index(before i: Index) -> Index {
+    public func index(before i: Index) -> Index {
         guard let index = i.index else { return endIndex }
         let reversed = base[..<base.index(before: index)].reversed()
         let separator = reversed.firstIndex(where: isSeparator)
@@ -68,7 +76,11 @@ extension LazySplitOmittingCollection: BidirectionalCollection where Base: Bidir
 extension LazySplitOmittingCollection: LazyCollectionProtocol {}
 
 extension LazyCollectionProtocol {
-    func splitOmittingEmptySubsequences(
+    /// Returns a `LazySplitOmittingCollection` of `elements`
+    ///
+    /// - Parameter isSeparator:
+    ///     A predicate indicating when the subsequences should split
+    public func splitOmittingEmptySubsequences(
         isSeparator: @escaping (Elements.Element) -> Bool
     ) -> LazySplitOmittingCollection<Elements> {
         LazySplitOmittingCollection(
@@ -79,7 +91,11 @@ extension LazyCollectionProtocol {
 }
 
 extension LazyCollectionProtocol where Elements.Element: Equatable {
-    func splitOmittingEmptySubsequences(
+    /// Returns a `LazySplitOmittingCollection` of `elements`
+    ///
+    /// - Parameter separator:
+    ///     An `Elements.Element` indicating when the subsequences should split
+    public func splitOmittingEmptySubsequences(
         separator: Elements.Element
     ) -> LazySplitOmittingCollection<Elements> {
         LazySplitOmittingCollection(
@@ -88,4 +104,3 @@ extension LazyCollectionProtocol where Elements.Element: Equatable {
         )
     }
 }
-
