@@ -14,10 +14,18 @@ final class PeekingIteratorTests: XCTestCase {
         XCTAssertEqual(nil, iterator.next())
     }
 
-    func testPeekingIterator_WithoutPeek() {
-        // Make sure that iterator does not require peek to be called first.
+    func testPeekingIteratorNeverCallingPeek() {
         var iterator = [1,2,3].makeIterator().peekable()
         XCTAssertEqual(1, iterator.next())
+        XCTAssertEqual(2, iterator.next())
+        XCTAssertEqual(3, iterator.next())
+        XCTAssertEqual(nil, iterator.next())
+    }
+
+    func testCallingNextFirstAndPeekAtSomePoint() {
+        var iterator = [1, 2, 3].makeIterator().peekable()
+        XCTAssertEqual(1, iterator.next())
+        XCTAssertEqual(2, iterator.peek())
         XCTAssertEqual(2, iterator.next())
         XCTAssertEqual(3, iterator.next())
         XCTAssertEqual(nil, iterator.next())
