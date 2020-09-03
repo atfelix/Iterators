@@ -17,7 +17,7 @@ public struct PeekingIterator<Base: IteratorProtocol> {
 
 extension PeekingIterator: IteratorProtocol {
     public mutating func next() -> Base.Element? {
-        let temp = current
+        let temp = peek()
         current = base.next()
 
         return temp
